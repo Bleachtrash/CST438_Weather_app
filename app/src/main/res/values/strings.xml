@@ -7,4 +7,5 @@
     <string name="sign_up">Sign Up</string>
     <string name="or">OR...</string>
     <string name="continue_as_guest">Continue as Guest</string>
+    <string name="sign_in">sign in</string>
 </resources>
