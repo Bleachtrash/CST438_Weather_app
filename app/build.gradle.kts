@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -36,6 +37,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
