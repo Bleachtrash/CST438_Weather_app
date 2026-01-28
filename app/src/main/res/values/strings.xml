@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Weather_App</string>
+    <string name="app_title">Some Title</string>
+    <string name="username_Hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="or">OR...</string>
+    <string name="continue_as_guest">Continue as Guest</string>
 </resources>
