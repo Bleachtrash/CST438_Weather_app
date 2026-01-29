@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.room.runtime.v284)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
     // retrofit, http, etc.
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
