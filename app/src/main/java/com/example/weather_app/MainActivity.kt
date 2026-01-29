@@ -4,6 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.Room
+import com.example.weather_app.data.FavoritesRepository
+import com.example.weather_app.data.local.AppDatabase
+import com.example.weather_app.ui.favorites.FavoritesScreen
+import com.example.weather_app.ui.favorites.FavoritesViewModel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -20,12 +26,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Weather_AppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+                val db = remember {
+                    Room.databaseBuilder(
+                        applicationContext,
+                        AppDatabase::class.java,
+                        "weather_app.db"
+                    ).build()
                 }
+
+                val repo = remember { FavoritesRepository(db.favoriteDao()) }
+
+                val vm: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory(repo))
+
+                FavoritesScreen(
+                    viewModel = vm,
+                    onOpenFavorite = { favoriteId ->
+
+                    }
+                )
             }
         }
     }
