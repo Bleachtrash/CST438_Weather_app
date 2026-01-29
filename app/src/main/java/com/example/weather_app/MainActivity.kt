@@ -16,6 +16,7 @@ import com.example.weather_app.ui.theme.Weather_AppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Isaiah: Made room verification, but removed it here.
         enableEdgeToEdge()
         setContent {
             Weather_AppTheme {
