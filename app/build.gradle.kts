@@ -6,9 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.weather_app"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.weather_app"
@@ -61,6 +59,12 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.room.ktx.v284)
+    ksp(libs.androidx.room.compiler.v284)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.room.runtime.v284)
 
     // retrofit, http, etc.
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
