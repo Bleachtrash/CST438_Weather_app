@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        startActivity(Intent(this, SignInPage::class.java))
+//        startActivity(Intent(this, SignInPage::class.java))
     }
 }
 
