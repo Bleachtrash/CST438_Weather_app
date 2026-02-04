@@ -35,67 +35,80 @@ fun FavoritesScreen(
             )
         }
     ) { padding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(padding)
-                            .fillMaxSize()
-                            .padding(16.dp)
+
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+
+            // Add UI only in edit mode
+            if (isEditing) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = input,
+                        onValueChange = { input = it },
+                        label = { Text("Add county (e.g., Monterey County, CA)") },
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Button(
+                        onClick = {
+                            viewModel.addFavorite(input)
+                            input = ""
+                        },
+                        enabled = input.isNotBlank()
                     ) {
+                        Text("Add")
+                    }
+                }
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier.weight(1f),
-                                value = input,
-                                onValueChange = { input = it },
-                                label = { Text("Add county (e.g., Monterey County, CA)") },
-                                singleLine = true
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Button(
-                                onClick = {
-                                    viewModel.addFavorite(input)
-                                    input = ""
-                                }
-                            ) { Text("Add") }
-                        }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-                        Spacer(Modifier.height(16.dp))
-
-                        if (favorites.isEmpty()) {
-                            Text("No favorites yet.", style = MaterialTheme.typography.bodyLarge)
-                        } else {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+            if (favorites.isEmpty()) {
+                Text("No favorites yet.", style = MaterialTheme.typography.bodyLarge)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(favorites, key = { it.id }) { fav ->
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onOpenFavorite(fav.id) }
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                items(favorites, key = { it.id }) { fav ->
-                                    Card(
-                                        modifier = Modifier.fillMaxWidth()
+                                Text(
+                                    text = fav.name,
+                                    modifier = Modifier.weight(1f),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+
+                                // Delete only in edit mode
+                                if (isEditing) {
+                                    IconButton(
+                                        onClick = { viewModel.removeFavorite(fav.id) }
                                     ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable { onOpenFavorite(fav.id) }
-                                                .padding(16.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = fav.name,
-                                                modifier = Modifier.weight(1f),
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
-                                            IconButton(onClick = { viewModel.removeFavorite(fav.id) }) {
-                                                Icon(Icons.Default.Delete, contentDescription = "Remove")
-                                            }
-                                        }
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "Remove"
+                                        )
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
         }
+    }
 }
