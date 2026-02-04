@@ -9,10 +9,22 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FavoritesViewModel(
     private val repo: FavoritesRepository
 ) : ViewModel() {
+    private val _isEditing = MutableStateFlow(false)
+    val isEditing: StateFlow<Boolean> = _isEditing.asStateFlow()
+
+    fun toggleEditing() {
+        _isEditing.value = !_isEditing.value
+    }
+
+    fun setEditing(editing: Boolean) {
+        _isEditing.value = editing
+    }
 
     val favorites: StateFlow<List<FavoriteCountyEntity>> =
         repo.observeFavorites()
@@ -32,4 +44,46 @@ class FavoritesViewModel(
             return FavoritesViewModel(repo) as T
         }
     }
+
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query.asStateFlow()
+
+    private val _suggestions = MutableStateFlow<List<String>>(emptyList())
+    val suggestions: StateFlow<List<String>> = _suggestions.asStateFlow()
+
+    // Temporary suggestion source (replace with API search later)
+    private val seedLocations = listOf(
+        "Monterey County, CA",
+        "Santa Cruz County, CA",
+        "Santa Clara County, CA",
+        "San Mateo County, CA",
+        "San Francisco County, CA",
+        "Alameda County, CA",
+        "Contra Costa County, CA",
+        "Marin County, CA",
+        "San Benito County, CA",
+        "Sonoma County, CA",
+        "Napa County, CA",
+        "San Diego County, CA",
+        "Los Angeles County, CA",
+        "Orange County, CA",
+        "Riverside County, CA"
+    )
+
+    fun updateQuery(newQuery: String) {
+        _query.value = newQuery
+
+        val q = newQuery.trim()
+        _suggestions.value =
+            if (q.isEmpty()) emptyList()
+            else seedLocations
+                .filter { it.contains(q, ignoreCase = true) }
+                .take(8)
+    }
+
+    fun clearQuery() {
+        _query.value = ""
+        _suggestions.value = emptyList()
+    }
+
 }
