@@ -22,6 +22,7 @@ fun FavoritesScreen(
     val isEditing by viewModel.isEditing.collectAsState()
 
     var input by remember { mutableStateOf("") }
+    var favoriteToDelete by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -96,7 +97,7 @@ fun FavoritesScreen(
                                 // Delete only in edit mode
                                 if (isEditing) {
                                     IconButton(
-                                        onClick = { viewModel.removeFavorite(fav.id) }
+                                        onClick = { favoriteToDelete = fav.id }
                                     ) {
                                         Icon(
                                             Icons.Default.Delete,
@@ -111,4 +112,30 @@ fun FavoritesScreen(
             }
         }
     }
+    favoriteToDelete?.let { favId ->
+        AlertDialog(
+            onDismissRequest = { favoriteToDelete = null },
+            title = { Text("Remove favorite") },
+            text = {
+                val name = favorites.firstOrNull { it.id == favId }?.name ?: ""
+                Text("Remove \"$name\" from favorites?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.removeFavorite(favId)
+                        favoriteToDelete = null
+                    }
+                ) {
+                    Text("Remove")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { favoriteToDelete = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
