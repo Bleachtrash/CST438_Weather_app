@@ -11,6 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.ui.platform.LocalFocusManager
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,8 +24,11 @@ fun FavoritesScreen(
 ) {
     val favorites by viewModel.favorites.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
+    val suggestions by viewModel.suggestions.collectAsState()
+
 
     var input by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     var favoriteToDelete by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
@@ -44,24 +51,63 @@ fun FavoritesScreen(
                 .padding(16.dp)
         ) {
 
-            // Add UI only in edit mode
             if (isEditing) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedTextField(
-                        modifier = Modifier.weight(1f),
-                        value = input,
-                        onValueChange = { input = it },
-                        label = { Text("Add county (e.g., Monterey County, CA)") },
-                        singleLine = true
-                    )
+                    var expanded by remember { mutableStateOf(false) }
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded && suggestions.isNotEmpty(),
+                        onExpandedChange = { expanded = it }
+                    ) {
+                        var expanded by remember { mutableStateOf(false) }
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            OutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = input,
+                                onValueChange = {
+                                    input = it
+                                    viewModel.updateQuery(it)
+                                },
+                                label = { Text("Add county (e.g., Monterey County, CA)") },
+                                singleLine = true
+                            )
+
+                            if (suggestions.isNotEmpty() && input.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Card {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(max = 220.dp)
+                                    ) {
+                                        items(suggestions) { suggestion ->
+                                            ListItem(
+                                                headlineContent = { Text(suggestion) },
+                                                modifier = Modifier.clickable {
+                                                    viewModel.addFavorite(suggestion)
+                                                    input = ""
+                                                    viewModel.clearQuery()
+                                                    focusManager.clearFocus()
+                                                }
+                                            )
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     Spacer(modifier = Modifier.width(12.dp))
                     Button(
                         onClick = {
                             viewModel.addFavorite(input)
                             input = ""
+                            viewModel.clearQuery()
                         },
                         enabled = input.isNotBlank()
                     ) {
