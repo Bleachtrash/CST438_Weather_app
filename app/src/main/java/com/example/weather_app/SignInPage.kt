@@ -36,8 +36,7 @@ class SignInPage : ComponentActivity() {
         // Check database to see if user exists and password matches
     }
     public fun signUp(view : View?){
-        Toast.makeText(this, "REDIRECTING TO SIGN UP PAGE...", Toast.LENGTH_SHORT).show()   // Debug notif
-        // Start SignUpPage activity
+        startActivity(Intent(this, SignUpPage::class.java));
     }
     public fun Guest(view : View?){
         Toast.makeText(this, "SIGNING YOU IN AS GUEST..", Toast.LENGTH_SHORT).show()    // Debug toast

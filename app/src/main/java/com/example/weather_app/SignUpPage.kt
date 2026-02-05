@@ -1,5 +1,6 @@
 package com.example.weather_app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -34,7 +35,6 @@ class SignUpPage : ComponentActivity() {
         // Add user to DB
     }
     public fun SignIn(view : View?) {
-        Toast.makeText(this, "REDIRECTING TO SIGN IN PAGE...", Toast.LENGTH_SHORT).show()
-        // Start SignInPage activity
+        startActivity(Intent(this, SignInPage::class.java));
     }
 }
