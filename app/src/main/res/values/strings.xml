@@ -8,4 +8,6 @@
     <string name="or">OR...</string>
     <string name="continue_as_guest">Continue as Guest</string>
     <string name="sign_in">sign in</string>
+    <string name="create_an_account">Create an Account</string>
+    <string name="back_to_sign_in">Back to Sign In</string>
 </resources>

@@ -18,6 +18,9 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".SignUpPage"
+            android:exported="false" />
+        <activity
             android:name=".SignInPage"
             android:exported="true"
             android:label="@string/app_name"
