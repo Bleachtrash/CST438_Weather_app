@@ -8,12 +8,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [User::class, Favorite::class], version = 3)
-abstract class AppDatabase : RoomDatabase() {
+abstract class UserAppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun favoriteDao(): FavoriteDao
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: UserAppDatabase? = null
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -33,10 +33,10 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        fun getInstance(context: Context): AppDatabase =
+        fun getInstance(context: Context): UserAppDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(context.applicationContext,
-                    AppDatabase::class.java, "app_database")
+                    UserAppDatabase::class.java, "app_database")
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build().also { INSTANCE = it }
             }

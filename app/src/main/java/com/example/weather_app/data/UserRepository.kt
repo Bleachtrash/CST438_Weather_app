@@ -1,7 +1,6 @@
 package com.example.weather_app.data
 
 import android.content.Context
-import android.security.keystore.UserNotAuthenticatedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -86,7 +85,7 @@ class UserRepository private constructor(private val dao: UserDao) {
         fun getInstance(context: Context): UserRepository =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: UserRepository(
-                    AppDatabase.getInstance(context).userDao()
+                    UserAppDatabase.getInstance(context).userDao()
                 ).also { INSTANCE = it }
             }
     }
