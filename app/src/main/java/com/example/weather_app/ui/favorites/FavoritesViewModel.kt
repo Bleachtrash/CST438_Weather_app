@@ -5,16 +5,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weather_app.data.FavoritesRepository
 import com.example.weather_app.data.local.FavoriteCountyEntity
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class FavoritesViewModel(
     private val repo: FavoritesRepository
 ) : ViewModel() {
+
     private val _isEditing = MutableStateFlow(false)
     val isEditing: StateFlow<Boolean> = _isEditing.asStateFlow()
 
@@ -45,13 +46,13 @@ class FavoritesViewModel(
         }
     }
 
+    // --- Autocomplete state ---
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
     private val _suggestions = MutableStateFlow<List<String>>(emptyList())
     val suggestions: StateFlow<List<String>> = _suggestions.asStateFlow()
 
-    // Temporary suggestion source (replace with API search later)
     private val seedLocations = listOf(
         "Monterey County, CA",
         "Santa Cruz County, CA",
@@ -72,7 +73,6 @@ class FavoritesViewModel(
 
     fun updateQuery(newQuery: String) {
         _query.value = newQuery
-
         val q = newQuery.trim()
         _suggestions.value =
             if (q.isEmpty()) emptyList()
@@ -85,5 +85,4 @@ class FavoritesViewModel(
         _query.value = ""
         _suggestions.value = emptyList()
     }
-
 }
