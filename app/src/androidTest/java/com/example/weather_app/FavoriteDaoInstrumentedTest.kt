@@ -1,4 +1,4 @@
-package com.example.weather_app
+package com.example.weather_app.data.local
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
