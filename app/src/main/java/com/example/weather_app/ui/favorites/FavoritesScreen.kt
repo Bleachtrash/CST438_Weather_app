@@ -70,7 +70,6 @@ fun FavoritesScreen(
                                 value = input,
                                 onValueChange = {
                                     input = it
-                                    viewModel.updateQuery(it)
                                 },
                                 label = { Text("Add county (e.g., Monterey County, CA)") },
                                 singleLine = true
