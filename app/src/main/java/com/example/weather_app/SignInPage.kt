@@ -98,11 +98,15 @@ class SignInPage : ComponentActivity() {
         // Check database to see if user exists and password matches
     }
     public fun signUp(){
-        startActivity(Intent(this, SignUpPage::class.java));
+        startActivity(Intent(this, SignUpPage::class.java))
     }
     public fun Guest(){
-        Toast.makeText(this, "SIGNING YOU IN AS GUEST..", Toast.LENGTH_SHORT).show()    // Debug toast
+//        Toast.makeText(this, "SIGNING YOU IN AS GUEST..", Toast.LENGTH_SHORT).show()    // Debug toast
         // Sign user in using guest profile
             // Possibly just redirect to home page and set some is_guest bool to true or smth
+//        LocationPage(10.0f, 20.0f);
+        startActivity(Intent(this, LocationPage::class.java).apply {
+            putExtra("LAT", "10.000")
+            putExtra("LON", "20.000")})
     }
 }
