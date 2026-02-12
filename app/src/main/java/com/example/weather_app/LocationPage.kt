@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.text.AutoText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,15 +28,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.TextViewCompat
 import com.example.weather_app.ui.favorites.FavoritesScreen
 import com.google.android.gms.location.*
 import java.util.jar.Manifest
@@ -84,30 +89,55 @@ class LocationPage : ComponentActivity() {
                 }
             Toast.makeText(this, "Lat: $lat\nLon: $lon", Toast.LENGTH_SHORT).show()
         }
-        // Get the weather information from lat and lon
+        /**
+         *      Get weather
+         *      call api.weather.gov/{lat},{lon} to get place name and forecast url -> do here
+         *          Placename = properties/relativeLocation/properties/City
+         *          forecast url = properties/forecastHourly
+         *      call {forecast url} to get forecast
+         *          Current temp = properties/periods/0/temperature -> do here
+         *          Current weather = properties/periods/0/shortForecast -> do here
+         *          Get next ~10 hours of upcoming weather -> get on fly when creating the cards
+         *              Time = properties/periods/i/startTime.subString(11, 15) -> converted to 12 hr
+         *              Temp = properties/periods/i/temperature
+         */
+
+        /**
+         * Create the UI
+         *      Location
+         *      Current temp & weather(?)
+         *      Forecasted temp & weather(?)
+         *      "Log out" and "view favorites" buttons
+         */
+
+        val Location: String = "Monterey Bay"
+        val Temp: String = "100°F"
+        val Weather: String = "Cloudy"
         setContent {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.size(150.dp))
-                Text("[LOCATION]", fontSize = 30.sp)
+                Spacer(Modifier.size(100.dp))
+                Text(Location, modifier = Modifier.width(350.dp), fontSize = (70 - 2*Location.length).sp, textAlign = TextAlign.Center)
                 Spacer(Modifier.size(50.dp))
-                Text("50°F", fontSize = 100.sp)
-                Spacer(Modifier.size(50.dp))
+                Text(Temp, fontSize = 55.sp)
+                Text(Weather, fontSize = 25.sp)
+                Spacer(Modifier.size(80.dp))
                 val scrollState = rememberScrollState()
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier
                         .background(
-                            color = Color.Blue,
+                            color = Color(200, 140, 200, 255),
                             shape = RoundedCornerShape(5.dp)
                         )
                         .width(350.dp)
                         .horizontalScroll(scrollState)
                 ) {
                     for (i in 1..10){
+                        // Get time and temp from api as described above
                         TimeCard(i.toString()+":00", "10°F")
                     }
                 }
