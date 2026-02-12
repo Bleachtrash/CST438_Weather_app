@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.TextViewCompat
 import com.example.weather_app.ui.favorites.FavoritesScreen
+import com.example.weather_app.ui.favorites.FavoritesViewModel
 import com.google.android.gms.location.*
 import java.util.jar.Manifest
 
@@ -54,8 +55,9 @@ class LocationPage : ComponentActivity() {
         var lon = intent.getStringExtra("LON")
         if(lat.isNullOrBlank() || lon.isNullOrBlank()){
 
-            lat = "36.7898"
-            lon = "-122.1090"
+            // Default to the middle of Monterey
+            lat = "36.5972"
+            lon = "-121.8971"
 
             // Get the phones location
             var LocationProvider: FusedLocationProviderClient

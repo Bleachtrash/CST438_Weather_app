@@ -106,7 +106,7 @@ class SignInPage : ComponentActivity() {
             // Possibly just redirect to home page and set some is_guest bool to true or smth
 //        LocationPage(10.0f, 20.0f);
         startActivity(Intent(this, LocationPage::class.java).apply {
-            putExtra("IS_GUEST", "true")
+            putExtra("IS_GUEST", "false")
         })
     }
 }
