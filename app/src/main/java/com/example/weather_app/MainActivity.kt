@@ -22,8 +22,8 @@ import com.example.weather_app.ui.theme.Weather_AppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Isaiah: Made room verification, but removed it here.
         enableEdgeToEdge()
+
         setContent {
             Weather_AppTheme {
                 val navController = rememberNavController()
@@ -68,24 +68,27 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                val db = remember {
+                    Room.databaseBuilder(
+                        applicationContext,
+                        AppDatabase::class.java,
+                        "weather_app.db"
+                    ).build()
                 }
+
+                val repo = remember { FavoritesRepository(db.favoriteDao()) }
+
+                val vm: FavoritesViewModel = viewModel(
+                    factory = FavoritesViewModel.Factory(repo)
+                )
+
+                FavoritesScreen(
+                    viewModel = vm,
+                    onOpenFavorite = { favoriteId: String ->
+                        // TODO: handle favorite click (navigate, load forecast, etc.)
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Weather_AppTheme {
-        Greeting("Android")
     }
 }
