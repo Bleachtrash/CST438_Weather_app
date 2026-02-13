@@ -8,15 +8,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.weather_app.data.FavoritesRepository
 import com.example.weather_app.data.SessionManager
+import com.example.weather_app.data.local.AppDatabase
 import com.example.weather_app.ui.LocationRoute
 import com.example.weather_app.ui.SignInRoute
 import com.example.weather_app.ui.SignUpRoute
+import com.example.weather_app.ui.favorites.FavoritesScreen
+import com.example.weather_app.ui.favorites.FavoritesViewModel
 import com.example.weather_app.ui.theme.Weather_AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -59,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("weather") {
-                        LocationRoute (
+                        LocationRoute(
                             onSignOut = {
                                 SessionManager.clear()
                                 navController.navigate("signin") {
@@ -68,6 +75,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                }
                 val db = remember {
                     Room.databaseBuilder(
                         applicationContext,
