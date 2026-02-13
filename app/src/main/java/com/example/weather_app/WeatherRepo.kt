@@ -7,7 +7,11 @@ class WeatherRepo(
 ) {
     suspend fun getForecastForLatLon(lat: Double, lon: Double): List<ForecastPeriod> {
         val point = service.getPoint(lat, lon)
-        val forecast = service.getForecast(point.properties.forecast)
+        val forecast = service.getForecast(point.properties.forecastHourly)
         return forecast.properties.periods
+    }
+    suspend fun getCityForLatLon(lat: Double, lon: Double): String{
+        val point = service.getPoint(lat, lon)
+        return point.properties.relativeLocation.properties.city
     }
 }

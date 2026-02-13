@@ -1,5 +1,6 @@
 package com.example.weather_app
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.shapes.RectShape
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -40,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class SignInPage : ComponentActivity() {
     var UsernameValue: String = ""
@@ -47,6 +52,7 @@ class SignInPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
+        requestLocationPermission()
         setContent {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -89,7 +95,7 @@ class SignInPage : ComponentActivity() {
             Text(text = text, fontSize = 20.sp)
         }
     }
-    public fun signIn(){
+    fun signIn(){
         Toast.makeText(this, "Username: $UsernameValue\nPassword: $PasswordValue", Toast.LENGTH_SHORT).show()    // Debug just to show that button works
         if(UsernameValue.isEmpty() || PasswordValue.isEmpty()){
             Toast.makeText(this, "Username and password files must not be blank", Toast.LENGTH_SHORT).show()
@@ -97,12 +103,65 @@ class SignInPage : ComponentActivity() {
         }
         // Check database to see if user exists and password matches
     }
-    public fun signUp(){
+    fun signUp(){
         startActivity(Intent(this, SignUpPage::class.java))
     }
     public fun Guest(){
         startActivity(Intent(this, LocationPage::class.java).apply {
             putExtra("IS_GUEST", "false")
         })
+    fun Guest(){
+//        Toast.makeText(this, "SIGNING YOU IN AS GUEST..", Toast.LENGTH_SHORT).show()    // Debug toast
+        // Sign user in using guest profile
+            // Possibly just redirect to home page and set some is_guest bool to true or smth
+//        LocationPage(10.0f, 20.0f);
+        startLocationActivity("true")
+    }
+
+    fun requestLocationPermission(){
+        val locationPermissionRequest = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                    // Precise location access granted.
+                }
+                permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                    // Only approximate location access granted.
+                }
+                else -> {
+                    // No location access granted.
+                }
+            }
+        }
+
+        // Before you perform the actual permission request, check whether your app
+        // already has the permissions, and whether your app needs to show a permission
+        // rationale dialog. For more details, see Request permissions:
+        // https://developer.android.com/training/permissions/requesting#request-permission
+        locationPermissionRequest.launch(
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+    @SuppressLint("MissingPermission")
+    fun startLocationActivity(isGuest: String){
+        var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            startActivity(Intent(this, LocationPage::class.java).apply {
+                putExtra("LAT", location.latitude.toString())
+                putExtra("LON", location.longitude.toString())
+                putExtra("IS_GUEST", isGuest)
+            })
+        }
+        fusedLocationClient.lastLocation.addOnFailureListener {
+            startActivity(Intent(this, LocationPage::class.java).apply {
+                putExtra("LAT", "36.5975")
+                putExtra("LON", "-121.899")
+                putExtra("IS_GUEST", isGuest)
+            })
+        }
     }
 }
