@@ -1,4 +1,4 @@
-package com.example.weather_app.network
+package com.example.weather_app
 
 import retrofit2.http.GET
 import retrofit2.http.Path
