@@ -106,6 +106,10 @@ class SignInPage : ComponentActivity() {
     fun signUp(){
         startActivity(Intent(this, SignUpPage::class.java))
     }
+    public fun Guest(){
+        startActivity(Intent(this, LocationPage::class.java).apply {
+            putExtra("IS_GUEST", "false")
+        })
     fun Guest(){
 //        Toast.makeText(this, "SIGNING YOU IN AS GUEST..", Toast.LENGTH_SHORT).show()    // Debug toast
         // Sign user in using guest profile

@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.Console
 
 object NoaaApi {
 
@@ -17,6 +18,26 @@ object NoaaApi {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(NoaaInterceptor())
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    private val moshi = Moshi.Builder().build()
+
+    val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(client)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
+}
+
+object LocationsApi {
+    private const val BASE_URL = "http://api.geonames.org/"
+
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
 

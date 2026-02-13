@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_app.R
-import com.example.weather_app.network.ForecastPeriod
+import com.example.weather_app.ForecastPeriod
 
 class ForecastAdapter :
     ListAdapter<ForecastPeriod, ForecastAdapter.VH>(Diff) {

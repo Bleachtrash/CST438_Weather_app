@@ -18,6 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.data.SessionManager
 import com.google.android.gms.location.LocationServices
 import androidx.compose.foundation.lazy.*
+import com.example.weather_app.ForecastPeriod
+import com.example.weather_app.WeatherViewModel
 
 @Composable
 fun WeatherRoute(onSignOut: () -> Unit) {
@@ -136,7 +138,7 @@ private fun LocationLoader(onLocation: (Double, Double) -> Unit) {
 }
 
 @Composable
-private fun ForecastList(periods: List<com.example.weather_app.network.ForecastPeriod>) {
+private fun ForecastList(periods: List<ForecastPeriod>) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items(periods) { p ->
             Column(Modifier.fillMaxWidth().padding(12.dp)) {
