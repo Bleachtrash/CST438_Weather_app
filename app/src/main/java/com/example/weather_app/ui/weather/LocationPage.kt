@@ -1,19 +1,10 @@
-package com.example.weather_app
+package com.example.weather_app.ui.weather
 
-
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.health.connect.datatypes.units.Temperature
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.text.AutoText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -23,38 +14,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.TableInfo
-import com.example.weather_app.data.WeatherRepo
-import com.example.weather_app.network.ForecastPeriod
-import com.example.weather_app.ui.WeatherViewModel
-import com.example.weather_app.ui.favorites.FavoritesScreen
-import com.example.weather_app.ui.favorites.FavoritesViewModel
-import com.google.android.gms.location.*
-import java.util.jar.Manifest
+import com.example.weather_app.ui.auth.SignInPage
+import com.example.weather_app.data.remote.dto.ForecastPeriod
 
 class LocationPage : ComponentActivity() {
 
@@ -74,8 +52,8 @@ class LocationPage : ComponentActivity() {
                 uiState.isLoading -> {
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize()
+                        horizontalAlignment = Alignment.Companion.CenterHorizontally,
+                        modifier = Modifier.Companion.fillMaxSize()
                     ) {
                         CircularProgressIndicator()
                     }
@@ -95,20 +73,25 @@ class LocationPage : ComponentActivity() {
         val Temperature = periods[0].temperature.toString()
         val Weather = periods[0].shortForecast
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.Companion.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Companion.CenterHorizontally
         ) {
-            Spacer(Modifier.size(100.dp))
-            Text(Location, modifier = Modifier.width(350.dp), fontSize = (70 - 2*Location.length).sp, textAlign = TextAlign.Center)
-            Spacer(Modifier.size(50.dp))
+            Spacer(Modifier.Companion.size(100.dp))
+            Text(
+                Location,
+                modifier = Modifier.Companion.width(350.dp),
+                fontSize = (70 - 2 * Location.length).sp,
+                textAlign = TextAlign.Companion.Center
+            )
+            Spacer(Modifier.Companion.size(50.dp))
             Text("$Temperature°F", fontSize = 55.sp)
             Text(Weather, fontSize = 25.sp)
-            Spacer(Modifier.size(80.dp))
+            Spacer(Modifier.Companion.size(80.dp))
             val scrollState = rememberScrollState()
             Row(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .background(
                         color = Color(200, 140, 200, 255),
                         shape = RoundedCornerShape(5.dp)
@@ -116,29 +99,36 @@ class LocationPage : ComponentActivity() {
                     .width(350.dp)
                     .horizontalScroll(scrollState)
             ) {
-                for (i in 1..10){
-                    TimeCard(periods[i].startTime.substring(11, 16), periods[i].temperature.toString())
+                for (i in 1..10) {
+                    TimeCard(
+                        periods[i].startTime.substring(11, 16),
+                        periods[i].temperature.toString()
+                    )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.Companion.weight(1f))
             Row(
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .background(Color(255, 200, 255, 255))
                     .fillMaxWidth()
-            ){
-                Button(onClick = { LogOut() },
-                    modifier = Modifier
+            ) {
+                Button(
+                    onClick = { LogOut() },
+                    modifier = Modifier.Companion
                         .width(150.dp)
                         .padding(10.dp),
-                    shape = RoundedCornerShape(5.dp)) {
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
+                ) {
                     Text("Log out")
                 }
-                Spacer(Modifier.weight(1f))
-                Button(onClick = { Favorites() },
-                    modifier = Modifier
+                Spacer(Modifier.Companion.weight(1f))
+                Button(
+                    onClick = { Favorites() },
+                    modifier = Modifier.Companion
                         .width(150.dp)
                         .padding(10.dp),
-                    shape = RoundedCornerShape(5.dp)) {
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
+                ) {
                     Text("Favorites")
                 }
             }
@@ -147,17 +137,22 @@ class LocationPage : ComponentActivity() {
     @Composable
     fun TimeCard(time: String, temp: String){
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
+            horizontalAlignment = Alignment.Companion.CenterHorizontally,
+            modifier = Modifier.Companion
                 .padding(5.dp)
                 .background(
-                    color = Color.White, shape = RoundedCornerShape(5.dp)
+                    color = Color.Companion.White,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
                 )
                 .width(50.dp)
-                .border(1.5.dp, Color.Black, RoundedCornerShape(5.dp))
+                .border(
+                    1.5.dp,
+                    Color.Companion.Black,
+                    androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
+                )
         ) {
-            Text(time, modifier = Modifier.padding(top = 3.dp))
-            Text("$temp°F", modifier = Modifier.padding(bottom = 3.dp))
+            Text(time, modifier = Modifier.Companion.padding(top = 3.dp))
+            Text("$temp°F", modifier = Modifier.Companion.padding(bottom = 3.dp))
         }
     }
 

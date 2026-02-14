@@ -1,14 +1,11 @@
-package com.example.weather_app
+package com.example.weather_app.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class SignUpPage : ComponentActivity() {
     var UsernameValue: String = ""
@@ -39,40 +34,49 @@ class SignUpPage : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.Companion.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(
+                    10.dp,
+                    Alignment.Companion.CenterVertically
+                ),
+                horizontalAlignment = Alignment.Companion.CenterHorizontally
             ) {
                 var UsernameText = remember { mutableStateOf("") }
                 var PasswordText = remember { mutableStateOf("") }
 
                 Text("Create an Account!", fontSize = 30.sp)
-                Spacer(Modifier.size(25.dp))
+                Spacer(Modifier.Companion.size(25.dp))
 
                 TextField(
                     value = UsernameText.value,
                     onValueChange = {
                         UsernameText.value = it
-                        UsernameValue = UsernameText.value},
-                    label = {Text("Username")}
+                        UsernameValue = UsernameText.value
+                    },
+                    label = { Text("Username") }
                 )
                 TextField(
                     value = PasswordText.value,
                     visualTransformation = PasswordVisualTransformation(),
                     onValueChange = {
                         PasswordText.value = it
-                        PasswordValue = PasswordText.value},
-                    label = {Text("Password")}
+                        PasswordValue = PasswordText.value
+                    },
+                    label = { Text("Password") }
                 )
-                TextButton({signUp()}, "Sign Up")
+                TextButton({ signUp() }, "Sign Up")
                 Text("Or...?", fontSize = 18.sp)
-                TextButton({signIn()}, "Back to Sign In")
+                TextButton({ signIn() }, "Back to Sign In")
             }
         }
     }
     @Composable
     fun TextButton(onClick: () -> Unit, text: String) {
-        Button(modifier = Modifier.size(width = 250.dp, height = 50.dp), onClick = { onClick() }, shape = Shapes(large = RoundedCornerShape(4.dp)).large){
+        Button(
+            modifier = Modifier.Companion.size(width = 250.dp, height = 50.dp),
+            onClick = { onClick() },
+            shape = Shapes(large = RoundedCornerShape(4.dp)).large
+        ) {
             Text(text = text, fontSize = 20.sp)
         }
     }

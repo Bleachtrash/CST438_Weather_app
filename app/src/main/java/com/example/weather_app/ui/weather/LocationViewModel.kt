@@ -1,8 +1,9 @@
-package com.example.weather_app
+package com.example.weather_app.ui.weather
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weather_app.data.LocationRepo
+import com.example.weather_app.data.remote.dto.LocationResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
