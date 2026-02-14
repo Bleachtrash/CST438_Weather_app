@@ -18,8 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.data.SessionManager
 import com.google.android.gms.location.LocationServices
 import androidx.compose.foundation.lazy.*
-import com.example.weather_app.ForecastPeriod
-import com.example.weather_app.WeatherViewModel
+import com.example.weather_app.data.remote.dto.ForecastPeriod
+import com.example.weather_app.ui.weather.WeatherViewModel
 
 @Composable
 fun WeatherRoute(onSignOut: () -> Unit) {

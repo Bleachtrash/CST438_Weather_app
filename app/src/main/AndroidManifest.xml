@@ -16,16 +16,16 @@
         android:theme="@style/Theme.Weather_App"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".LocationPage"
+            android:name=".ui.weather.LocationPage"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SignUpPage"
+            android:name=".ui.auth.SignUpPage"
             android:exported="false" />
         <activity
-            android:name=".SignInPage"
+            android:name=".ui.auth.SignInPage"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Weather_App">
