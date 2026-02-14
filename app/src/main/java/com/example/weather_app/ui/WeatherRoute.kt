@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,10 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.data.SessionManager
-import com.google.android.gms.location.LocationServices
-import androidx.compose.foundation.lazy.*
-import com.example.weather_app.data.remote.dto.ForecastPeriod
+import com.example.weather_app.model.ForecastPeriod
 import com.example.weather_app.ui.weather.WeatherViewModel
+import com.google.android.gms.location.LocationServices
 
 @Composable
 fun WeatherRoute(onSignOut: () -> Unit) {
@@ -60,7 +60,9 @@ fun WeatherRoute(onSignOut: () -> Unit) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
@@ -101,9 +103,11 @@ fun WeatherRoute(onSignOut: () -> Unit) {
                     CircularProgressIndicator()
                 }
             }
+
             uiState.error != null -> {
                 Text(uiState.error ?: "Unknown error", color = MaterialTheme.colorScheme.error)
             }
+
             else -> {
                 ForecastList(uiState.periods)
             }
@@ -127,7 +131,6 @@ private fun LocationLoader(onLocation: (Double, Double) -> Unit) {
                 if (loc != null) {
                     onLocation(loc.latitude, loc.longitude)
                 } else {
-                    // Emulator fallback
                     onLocation(47.6062, -122.3321)
                 }
             }
@@ -142,12 +145,8 @@ private fun ForecastList(periods: List<ForecastPeriod>) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items(periods) { p ->
             Column(Modifier.fillMaxWidth().padding(12.dp)) {
-                Text(p.name, style = MaterialTheme.typography.titleMedium)
-                Text("${p.temperature}${p.temperatureUnit} — ${p.shortForecast}")
-                if (!p.detailedForecast.isNullOrBlank()) {
-                    Spacer(Modifier.height(6.dp))
-                    Text(p.detailedForecast!!)
-                }
+                Text(p.startTime, style = MaterialTheme.typography.titleMedium)
+                Text("${p.temperature}°F — ${p.shortForecast}")
             }
         }
     }

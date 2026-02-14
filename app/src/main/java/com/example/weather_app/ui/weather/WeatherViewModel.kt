@@ -3,7 +3,7 @@ package com.example.weather_app.ui.weather
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather_app.data.WeatherRepo
-import com.example.weather_app.data.remote.dto.ForecastPeriod
+import com.example.weather_app.model.ForecastPeriod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

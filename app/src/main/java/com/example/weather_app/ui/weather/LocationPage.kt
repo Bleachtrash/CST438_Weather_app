@@ -30,9 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.ui.auth.SignInPage
-import com.example.weather_app.data.remote.dto.ForecastPeriod
+import com.example.weather_app.model.ForecastPeriod
 
 class LocationPage : ComponentActivity() {
 
@@ -47,7 +49,7 @@ class LocationPage : ComponentActivity() {
         setContent {
             val vm: WeatherViewModel = viewModel()
             vm.load(lat.toString().toDouble(), lon.toString().toDouble())
-            val uiState by vm.ui.collectAsState()
+            val uiState = vm.ui.collectAsState().value
             when {
                 uiState.isLoading -> {
                     Column(
