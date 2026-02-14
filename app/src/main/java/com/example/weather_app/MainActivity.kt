@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 val userId by SessionManager.currentUserId.collectAsState()
-                val start = if (userId == null) "signIn" else "weather"
+                val start = if (userId == null) "signin" else "weather"
 
                 NavHost(
                     navController = navController,
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         SignInRoute(
                             onSignedIn = {
                                 navController.navigate("weather") {
-                                    popUpTo("signIn") { inclusive = true }
+                                    popUpTo("signin") { inclusive = true }
                                 }
                             },
                             onGoToSignUp = { navController.navigate("signup") }
