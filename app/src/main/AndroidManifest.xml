@@ -20,21 +20,17 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".ui.auth.SignUpPage"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.SignInPage"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Weather_App">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".ui.auth.SignInPage" />
     </application>
 
 </manifest>

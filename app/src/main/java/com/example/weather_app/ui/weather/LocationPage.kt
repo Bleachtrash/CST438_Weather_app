@@ -1,5 +1,6 @@
 package com.example.weather_app.ui.weather
 
+import com.example.weather_app.ui.favorites.FavoritesPage
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -23,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -167,7 +169,7 @@ class LocationPage : ComponentActivity() {
             return
         }
         Toast.makeText(this, "Redirecting to favorites page...", Toast.LENGTH_SHORT).show()
-        // Start favorites activity
+        startActivity(Intent(this, FavoritesPage::class.java))
     }
 
 }

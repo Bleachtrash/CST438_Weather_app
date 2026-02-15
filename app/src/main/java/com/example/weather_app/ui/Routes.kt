@@ -11,12 +11,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +29,6 @@ import java.security.MessageDigest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun SignInRoute(
     onSignedIn: () -> Unit,
     onGoToSignUp: () -> Unit
@@ -44,8 +43,7 @@ fun SignInRoute(
     var loading by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp),
+        modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -68,26 +66,33 @@ fun SignInRoute(
 
         if (error != null) {
             Text(error!!, color = MaterialTheme.colorScheme.error)
-
         }
 
         Button(
             onClick = {
                 error = null
-                if (username.isBlank() || password.isBlank()) {
+
+                val u = username.trim()
+                val p = password
+
+                if (u.isEmpty() || p.isEmpty()) {
                     error = "Enter username and password"
+                    Toast.makeText(context, "Blank: u='${u}' pLen=${p.length}", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
+
                 loading = true
                 scope.launch {
                     try {
-                        val hashed = hashPassword(password)
-                        val user = repo.login(username, hashed)
+                        val hashed = hashPassword(p)
+                        val user = repo.login(u, hashed)
+
                         if (user != null) {
                             SessionManager.setUser(user.id)
-                            Toast.makeText(context, "Signed in", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Signed in as id=${user.id}", Toast.LENGTH_SHORT).show()
                             onSignedIn()
                         } else {
+                            Toast.makeText(context, "Login failed (user==null)", Toast.LENGTH_SHORT).show()
                             error = "Invalid username or password"
                         }
                     } catch (e: Exception) {
@@ -108,9 +113,7 @@ fun SignInRoute(
         ) {
             Text("Create an account")
         }
-
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,7 +124,7 @@ fun SignUpRoute(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val repo = remember {UserRepository.getInstance(context) }
+    val repo = remember { UserRepository.getInstance(context) }
 
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -130,8 +133,7 @@ fun SignUpRoute(
     var loading by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp),
+        modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -167,19 +169,25 @@ fun SignUpRoute(
         Button(
             onClick = {
                 error = null
-                if (username.isBlank() || password.isBlank()) {
+
+                val u = username.trim()
+                val p = password
+                val pc = passwordConfirm
+
+                if (u.isEmpty() || p.isEmpty()) {
                     error = "Enter username and password"
                     return@Button
                 }
-                if (password != passwordConfirm) {
+                if (p != pc) {
                     error = "Passwords do not match"
                     return@Button
                 }
+
                 loading = true
                 scope.launch {
                     try {
-                        val hashed = hashPassword(password)
-                        val insertedId = repo.register(username.trim(), hashed)
+                        val hashed = hashPassword(p)
+                        val insertedId = repo.register(u, hashed)
                         if (insertedId == -1L) {
                             error = "Username already exists"
                         } else {

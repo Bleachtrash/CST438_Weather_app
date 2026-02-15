@@ -22,7 +22,10 @@ import com.example.weather_app.ui.weather.WeatherViewModel
 import com.google.android.gms.location.LocationServices
 
 @Composable
-fun WeatherRoute(onSignOut: () -> Unit) {
+fun WeatherRoute(onSignOut: () -> Unit, onOpenFavorites: () -> Unit) {
+
+    Button(onClick = onOpenFavorites) { Text("Favorites") }
+
     val context = LocalContext.current
 
     val vm: WeatherViewModel = viewModel()
