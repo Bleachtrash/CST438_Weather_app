@@ -48,4 +48,24 @@ class FavoritesViewModel(
     fun clearQuery() {
         _suggestions.value = emptyList()
     }
+
+    private val countySuggestions = listOf(
+        "Monterey County, CA",
+        "Santa Cruz County, CA",
+        "San Benito County, CA",
+        "Santa Clara County, CA",
+        "San Mateo County, CA",
+        "Alameda County, CA",
+        "San Francisco County, CA",
+        "Contra Costa County, CA",
+        "Marin County, CA",
+        "Sonoma County, CA"
+    )
+
+    fun updateQuery(query: String) {
+        val q = query.trim()
+        _suggestions.value =
+            if (q.isBlank()) emptyList()
+            else countySuggestions.filter { it.contains(q, ignoreCase = true) }.take(8)
+    }
 }
