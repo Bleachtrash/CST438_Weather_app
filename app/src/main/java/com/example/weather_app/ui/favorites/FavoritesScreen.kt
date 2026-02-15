@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -22,7 +23,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesViewModel,
-    onOpenFavorite: (favoriteId: String) -> Unit = {}
+    onBack: () -> Unit,
+    onOpenFavorite: (String) -> Unit
 ) {
     val favorites by viewModel.favorites.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
@@ -36,6 +38,11 @@ fun FavoritesScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Favorites") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
                 actions = {
                     TextButton(onClick = { viewModel.toggleEditing() }) {
                         Text(if (isEditing) "Done" else "Edit")
@@ -67,7 +74,8 @@ fun FavoritesScreen(
 
                         OutlinedTextField(
                             value = input,
-                            onValueChange = { input = it },
+                            onValueChange = { input = it
+                                            viewModel.updateQuery(it)},
                             label = { Text("Monterey County, CA") },
                             leadingIcon = {
                                 Icon(Icons.Default.LocationOn, contentDescription = null)
@@ -176,7 +184,7 @@ fun FavoritesScreen(
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { onOpenFavorite(fav.id) }
+                                .clickable { onOpenFavorite(fav.name) }
                         ) {
                             Row(
                                 modifier = Modifier
