@@ -1,5 +1,6 @@
 package com.example.weather_app.ui.weather
 
+import com.example.weather_app.ui.favorites.FavoritesPage
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -168,7 +169,7 @@ class LocationPage : ComponentActivity() {
             return
         }
         Toast.makeText(this, "Redirecting to favorites page...", Toast.LENGTH_SHORT).show()
-        // Start favorites activity
+        startActivity(Intent(this, FavoritesPage::class.java))
     }
 
 }
