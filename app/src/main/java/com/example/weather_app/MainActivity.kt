@@ -5,7 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.getValue import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,29 +42,33 @@ class MainActivity : ComponentActivity() {
                 val userId by SessionManager.currentUserId.collectAsState()
                 val start = if (userId == null) "signin" else "weather"
 
-                NavHost(
-                    navController = navController,
-                    startDestination = start
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
                 ) {
-                    composable("signin") {
-                        val context = LocalContext.current
-                        val repo = remember { UserRepository.getInstance(context) }
+                    NavHost(
+                        navController = navController,
+                        startDestination = start
+                    ) {
+                        composable("signin") {
+                            val context = LocalContext.current
+                            val repo = remember { UserRepository.getInstance(context) }
 
-                        val vm: SignInViewModel = viewModel(
-                            factory = SignInViewModelFactory(repo)
-                        )
+                            val vm: SignInViewModel = viewModel(
+                                factory = SignInViewModelFactory(repo)
+                            )
 
-                        SignInRoute(
-                            viewModel = vm,
-                            onSignedIn = {
-                                navController.navigate("weather") {
-                                    popUpTo("signin") { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                            },
-                            onGoToSignUp = { navController.navigate("signup") }
-                        )
-                    }
+                            SignInRoute(
+                                viewModel = vm,
+                                onSignedIn = {
+                                    navController.navigate("weather") {
+                                        popUpTo("signin") { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onGoToSignUp = { navController.navigate("signup") }
+                            )
+                        }
 
                     composable("signup") {
                         SignUpRoute(
@@ -85,7 +92,6 @@ class MainActivity : ComponentActivity() {
                             onOpenFavorites = { navController.navigate("favorites") }
                         )
                     }
-
                     composable(
                         route = "weatherById/{locationId}",
                         arguments = listOf(
@@ -108,7 +114,6 @@ class MainActivity : ComponentActivity() {
                             forcedLocationId = locationId
                         )
                     }
-
                     composable("favorites") {
                         FavoritesRoute(
                             onBack = { navController.popBackStack() },
@@ -125,4 +130,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 }
