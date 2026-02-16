@@ -4,7 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepository private constructor(private val dao: UserDao) {
+class UserRepository internal constructor(private val dao: UserDao) {
 
     suspend fun register(username: String, password: String): Long = withContext(Dispatchers.IO) {
         dao.insert(User(username = username, password = password))
