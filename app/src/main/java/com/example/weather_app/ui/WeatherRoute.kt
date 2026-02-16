@@ -5,13 +5,14 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
@@ -22,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.model.ForecastPeriod
+import com.example.weather_app.ui.weather.WeatherHero
 import com.example.weather_app.ui.weather.WeatherViewModel
 import com.google.android.gms.location.LocationServices
 import java.time.OffsetDateTime
@@ -86,9 +87,7 @@ fun WeatherRoute(
     }
 
     if (!isForced && hasPermission) {
-        LocationEffect { lat, lon ->
-            vm.load(lat, lon)
-        }
+        LocationEffect { lat, lon -> vm.load(lat, lon) }
     }
 
     WeatherScreen(
@@ -167,10 +166,10 @@ private fun WeatherScreen(
                 },
                 actions = {
                     IconButton(onClick = onOpenFavorites) {
-                        Icon(Icons.Filled.Favorite, contentDescription = null)
+                        Icon(Icons.Filled.Favorite, contentDescription = "Favorites")
                     }
                     IconButton(onClick = onSignOut) {
-                        Icon(Icons.Filled.ExitToApp, contentDescription = null)
+                        Icon(Icons.Filled.ExitToApp, contentDescription = "Sign out")
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -237,36 +236,86 @@ private fun WeatherContent(
     val hourly = periods.drop(1).take(12)
     val daily = periods.take(14)
 
+    val hl = remember(periods) { computeTodayHighLow(periods) }
+    val highText = hl.high?.let { "${it}°" } ?: "—"
+    val lowText = hl.low?.let { "${it}°" } ?: "—"
+
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item { HeroCard(city = city, current = current) }
+        item {
+            ElevatedCard(
+                shape = RoundedCornerShape(28.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                WeatherHero(
+                    location = city,
+                    temperature = current?.temperature?.let { "${it}°" } ?: "—",
+                    condition = current?.shortForecast ?: "—",
+                    high = highText,
+                    low = lowText,
+                    icon = emojiForForecast(current?.shortForecast)
+                )
+            }
+        }
+
+        item {
+            WeatherStatsRow(
+                wind = "—",
+                humidity = "—",
+                uv = "—",
+                updated = current?.startTime?.let { formatTime(it) } ?: "—"
+            )
+        }
+
         if (hourly.isNotEmpty()) {
             item { HourlyRow(hourly) }
         }
+
         if (daily.isNotEmpty()) {
-            items(daily) { p -> ForecastRow(p) }
+            items(items = daily) { p ->
+                ForecastRow(p)
+            }
         }
     }
 }
 
 @Composable
-private fun HeroCard(city: String, current: ForecastPeriod?) {
+private fun WeatherStatsRow(
+    wind: String,
+    humidity: String,
+    uv: String,
+    updated: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        StatChip(label = "Wind", value = wind, modifier = Modifier.weight(1f))
+        StatChip(label = "Humidity", value = humidity, modifier = Modifier.weight(1f))
+        StatChip(label = "UV", value = uv, modifier = Modifier.weight(1f))
+        StatChip(label = "Updated", value = updated, modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun StatChip(label: String, value: String, modifier: Modifier = Modifier) {
     ElevatedCard(
-        shape = RoundedCornerShape(28.dp),
-        modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(18.dp),
+        modifier = modifier
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            Text(city)
-            AnimatedContent(targetState = current?.temperature, label = "") { temp ->
-                Text(if (temp != null) "${temp}°" else "—")
-            }
-            Text(current?.shortForecast ?: "—")
+            Text(value, style = MaterialTheme.typography.titleSmall)
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -277,11 +326,25 @@ private fun HourlyRow(periods: List<ForecastPeriod>) {
         items(periods) { p ->
             ElevatedCard(
                 shape = RoundedCornerShape(18.dp),
-                modifier = Modifier.width(96.dp)
+                modifier = Modifier.width(104.dp)
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(formatTime(p.startTime))
-                    Text("${p.temperature}°")
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = formatTime(p.startTime),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = emojiForForecast(p.shortForecast),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "${p.temperature}°",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }
@@ -300,11 +363,30 @@ private fun ForecastRow(p: ForecastPeriod) {
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                text = emojiForForecast(p.shortForecast),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(end = 12.dp)
+            )
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(formatDayLabel(p.startTime))
-                Text(p.shortForecast)
+                Text(
+                    text = formatDayLabel(p.startTime),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = p.shortForecast,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-            Text("${p.temperature}°")
+
+            Text(
+                text = "${p.temperature}°",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
@@ -321,6 +403,7 @@ private fun WeatherSkeleton() {
                 shape = RoundedCornerShape(18.dp),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(72.dp)
                     .padding(bottom = 12.dp)
             ) {}
         }
@@ -336,9 +419,27 @@ private fun WeatherErrorState(message: String) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Couldn’t load weather")
+        Text("Couldn’t load weather", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
-        Text(message)
+        Text(
+            message,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+private fun emojiForForecast(text: String?): String {
+    val t = (text ?: "").lowercase()
+    return when {
+        "thunder" in t -> "⛈️"
+        "snow" in t || "sleet" in t || "blizzard" in t -> "❄️"
+        "rain" in t || "showers" in t || "drizzle" in t -> "🌧️"
+        "fog" in t || "haze" in t || "smoke" in t -> "🌫️"
+        "wind" in t -> "💨"
+        "cloud" in t || "overcast" in t -> "☁️"
+        "sun" in t || "clear" in t -> "☀️"
+        else -> "🌤️"
     }
 }
 
@@ -358,4 +459,27 @@ private fun formatDayLabel(iso: String): String {
     } catch (_: Exception) {
         iso
     }
+}
+
+private data class HighLow(val high: Int?, val low: Int?)
+
+private fun computeTodayHighLow(periods: List<ForecastPeriod>): HighLow {
+    val first = periods.firstOrNull() ?: return HighLow(null, null)
+
+    val firstDt = runCatching { OffsetDateTime.parse(first.startTime) }.getOrNull()
+        ?: return HighLow(null, null)
+
+    val day = firstDt.toLocalDate()
+
+    val todaysTemps = periods.mapNotNull { p ->
+        val dt = runCatching { OffsetDateTime.parse(p.startTime) }.getOrNull() ?: return@mapNotNull null
+        if (dt.toLocalDate() == day) p.temperature else null
+    }
+
+    if (todaysTemps.isEmpty()) return HighLow(null, null)
+
+    return HighLow(
+        high = todaysTemps.maxOrNull(),
+        low = todaysTemps.minOrNull()
+    )
 }
