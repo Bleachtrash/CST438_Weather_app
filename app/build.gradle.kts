@@ -96,5 +96,6 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:5.3.0")
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
-
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation("androidx.compose.material:material-icons-extended")
 }

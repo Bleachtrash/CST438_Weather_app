@@ -12,8 +12,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.weather_app.data.SessionManager
-import com.example.weather_app.ui.SignInRoute
-import com.example.weather_app.ui.SignUpRoute
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weather_app.data.UserRepository
+import com.example.weather_app.ui.auth.SignInRoute
+import com.example.weather_app.ui.auth.SignInViewModel
+import com.example.weather_app.ui.auth.SignInViewModelFactory
+import com.example.weather_app.ui.auth.SignUpRoute
 import com.example.weather_app.ui.WeatherRoute
 import com.example.weather_app.ui.favorites.FavoritesRoute
 import com.example.weather_app.ui.theme.Weather_AppTheme
@@ -38,10 +44,19 @@ class MainActivity : ComponentActivity() {
                     startDestination = start
                 ) {
                     composable("signin") {
+                        val context = LocalContext.current
+                        val repo = remember { UserRepository.getInstance(context) }
+
+                        val vm: SignInViewModel = viewModel(
+                            factory = SignInViewModelFactory(repo)
+                        )
+
                         SignInRoute(
+                            viewModel = vm,
                             onSignedIn = {
                                 navController.navigate("weather") {
                                     popUpTo("signin") { inclusive = true }
+                                    launchSingleTop = true
                                 }
                             },
                             onGoToSignUp = { navController.navigate("signup") }
